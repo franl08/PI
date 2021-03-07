@@ -141,6 +141,80 @@ char *mystrstr (char s1[], char s2[]){
 
     return ret;
 }
+
+// Question 11.
+void mystrrev(char s[]){
+    int i, j;
+    for (i = 0; s[i]; i++);
+    i--;
+
+    for (j = 0; s[0]; j++){
+        char temp = s[j];
+        s[i] = temp;
+        s[j] = s[i];
+    }
+}
+
+// Question 12.
+int isVogal(char c){
+    return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
+         || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U');
+}
+
+void strnoV(char s[]){
+    int i;
+    
+    for (i = 0; s[i]; i++)
+        if (isVogal(s[i])){
+            for (int j = i; s[j]; j++)
+                s[j] = s[j + 1];
+            i--;
+        }
+}
+
+// Question 13.
+void truncW (char t[], int n){
+    int i, j, count = 0;
+
+    for (i = 0; t[i]; i++){
+        if (t[i] != ' ') count++;
+        else count = 0;
+
+        if (count > n){
+            for (j = i; t[j]; j++) t[j] = t[j + 1];
+            i--;
+        }
+    }
+}
+
+// Question 14.
+char charMaisfreq (char s[]){
+    int freq = 0, count = 1;
+    char res = '\0';
+
+    for (int i = 0; s[i]; i++, count = 1){
+        for (int j = i + 1; s[j]; j++)
+            if (s[i] == s[j]) count++;
+        
+        if (count > freq){
+            res = s[i];
+            freq = count;
+        }
+    }
+
+    return res;
+}
+
+// Question 15.
+int iguaisConsecutivos(char s[]){
+    char prev = s[0];
+    int maior = 0, streak = 1, i, j;
+    for (i = 1; s[i]; i = ++j, streak = 1){
+        for (j = i; s[j] == s[j + 1]; j++, streak++);
+        if (streak > maior) maior = streak;
+    }
+    return maior;
+}
 /*
 int main(){
 
