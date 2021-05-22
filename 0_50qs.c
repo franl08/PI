@@ -223,6 +223,7 @@ int aux(char s[], int j, int n){
 
 int difConsecutivos(char s[]){
     int i, j, count, flag;
+    int max = 0;
 
     for (i = 0; s[i]; i++, count = 0, flag = 0){
         for (j = i; s[j] && flag; j++){
@@ -459,7 +460,7 @@ int elimRep(int v[], int N){
             if (v[i] == v[j]){
                 for (l = j; l < N; l++)
                     v[l] = v[l + 1];
-                n--;
+                N--;
                 j--;
             }
     return i;
