@@ -363,3 +363,279 @@ ABin mirror(ABin *a){
         mirror(&(*a)->esq);
     }
 }
+
+// Questão 31
+void inOrder(ABin a, LInt* l){
+    if(a){
+        inOrder(a->esq, l);
+        while(*l)
+            l = &(*l)->prox;
+        *l = malloc(sizeof(struct lligada));
+        (*l)->valor = a->valor;
+        inOrder(a->dir, &(*l)->prox);    
+    }
+    else *l = NULL;
+}
+
+// Questão 32.
+void preOrder(ABin a, LInt* l){
+    if(a){
+        *l = malloc(sizeof(struct lligada));
+        (*l)->valor = a->valor;
+        preOrder(a->esq, &(*l)->prox);
+        while(*l)
+            l = &(*l)->prox;
+        preOrder(a->dir, l);    
+    }
+    else *l = NULL;
+}
+
+// Questão 33.
+void posOrder(ABin a, LInt *l){
+    if(a){
+        posOrder(a->esq, l);
+        while(*l)
+            l = &(*l)->prox;
+        posOrder(a->dir, l);
+        while(*l)
+            l = &(*l)->prox;
+        *l = malloc(sizeof(struct lligada));
+        (*l)->valor = a->valor;
+        (*l)->prox = NULL;    
+    }
+    else *l = NULL;
+}
+
+// Questão 34.
+int depth(ABin a, int x){
+    int dLeft, dRight;
+    if(a){
+        if(a->valor == x) return 1;
+        dLeft = 1 + depth(a->esq, x);
+        dRight = 1 + depth(a->dir, x);
+    }
+    else return -1;
+    
+    if(dLeft == -1 && dRight == -1) return -1;
+    else if(dLeft == -1 | (dLeft != -1 && dRight != -1 && dRight < dLeft)) return dRight;
+    return dLeft;
+}
+
+// Questão 35.
+int freeAB(ABin a){
+    int ac = 0;
+    while(a){
+        ac += 1 + freeAB(a->esq) + freeAB(a->dir);
+        free(a);
+    }
+    return ac;
+}
+
+// Questão 36.
+int pruneAB(ABin *a, int l){
+    int ac = 0;
+
+    if(*a && l == 0){
+        ac += 1 + pruneAB(&(*a)->esq, 0) + pruneAB(&(*a)->dir, 0);
+        free(*a);
+        *a = NULL
+    }
+    else if(*a) ac += pruneAB(&(*a)->esq, l - 1) + pruneAB(&(*a)->dir, l - 1);
+    return ac;
+}
+
+// Questão 37.
+int iguaisAB(ABin a, ABin b){
+    int ans = 1;
+
+    if((!a && b) || (!b && a)) ans = 0;
+
+    else if(a && b)
+        ans = a->valor == b->valor && iguaisAB(a->esq, b->esq) && iguaisAB(a->dir, b->dir);
+
+    return ans;    
+}
+
+// Questão 38.
+LInt concat(LInt *a, LInt b){
+    LInt init = (*a) ? *a : b;
+    for(; *a; a = &(*a)->prox);
+    *a = b;
+    return init;
+}
+LInt nivelL(ABin a, int n){
+    if(!a || n < 1) return NULL;
+    if(n == 1){
+        LInt new = malloc(sizeof(struct lligada));
+        new->valor = a->valor;
+        new->prox = NULL;
+        return new;
+    }
+    LInt listE = nivelL(a->esq, n - 1);
+    return concat(&listE, nivelL(a->dir, n - 1));
+}
+
+// Questão 39.
+int nivelV(ABin a, int n, int v[]){
+    if(!a || n < 1) return 0;
+
+    if(n == 1){
+        *v = a->valor;
+        return 1;
+    }
+
+    else{
+        int left = nivelV(a->esq, n - 1, v);
+        int right = nivelV(a->dir, n - 1, v + left);
+        return left + right;
+    }
+}
+
+// Questão 40.
+int dumpABin(ABin a, int v[], int N){
+    if(!a || N < 1) return 0;
+    
+    int esq = dumpABin(a->esq, v, N);
+    
+    if(esq < N){
+        *(v + esq) = a->valor;
+        return esq + dumpABin(a->dir, v + esq + 1, N - esq - 1) + 1;
+    }
+
+    else return N;
+}
+
+// Questão 41.
+ABin somasAcA(ABin a){
+    if(!a) return NULL;
+
+    ABin new = malloc(sizeof(struct nodo));
+    new->esq = somasAcA(a->esq);
+    new->dir = somasAcA(a->dir);
+    new->valor = a->valor + (new->esq ? new->esq->valor : 0) + (new->dir ? new->dir->valor : 0);
+
+    return new;
+}
+
+// Questão 42.
+int contaFolhas(ABin a){
+    int ac = 0;
+    if(!a) return 0;
+
+    return(!(a->esq) && !(a->dir)) + contaFolhas(a->esq) + contaFolhas(a->dir);
+}
+
+// Questão 43.
+ABin cloneMirror(ABin a){
+    ABin new = NULL;
+    if(a){
+        new = malloc(sizeof(struct nodo));
+        new->valor = a->valor;
+        new->esq = cloneMirror(a->dir);
+        new->dir = cloneMirror(a->esq);
+    }
+    return new;
+}
+
+// Questão 44.
+int addOrd(ABin *a, int x){
+    int found = 0;
+
+    while(*a && !found){
+        if(x < (*a)->valor) a = &(*a)->esq;
+        else if(x > (*a)->valor) a = &(*a)->dir;
+        else found = 1;
+    }
+    if(!found){
+        *a = malloc(sizeof(struct nodo);
+        (*a)->valor = x;
+        (*a)->esq = (*a)->dir = NULL;
+    }
+
+    return found;
+}
+
+// Questão 45.
+int lookupAB(ABin a, int x){
+    int ans = 0;
+
+    while(a && !ans){
+        if(x < a->valor) a = a->esq;
+        else if (x > a->valor) a = a->dir;
+        else ans = 1;
+    }
+
+    return ans;
+}
+
+// Questão 46.
+int depthOrd(ABin a, int x){
+    int pos = 0, found = 0;
+
+    while(a && !found){
+        pos++;
+        if(x < a->valor) a = a->esq;
+        else if(x > a->valor) a = a ->dir;
+        else found = 1;
+    }
+
+    return(found ? pos : -1);
+}
+
+// Questão 47.
+int maiorAB(ABin a){
+    while(a->dir){
+        a = a->dir;
+    }
+    return (a->dir ? a->dir->valor : a->valor);
+}
+
+// Questão 48.
+void removeMaiorA(ABin *a){
+    while(*a && (*a)->dir)
+        a = &(*a)->dir;
+    ABin tmp = (*a)->esq;
+    free(*a);
+    *a = tmp;
+}
+
+// Questão 49.
+int quantosMaiores(ABin a, int x){
+    if(!a) return 0;
+    if(a->valor <= x) return quantosMaiores(a->dir, x);
+    else return 1 + quantosMaiores(a->esq, x) + quantosMaiores(a->dir, x);
+}
+
+// Questão 50.
+void listToBTree(LInt l, ABin *a){
+    if(!l) *a = NULL;
+    else{
+        int mid = length(l)>>1;
+        LInt *c = &l;
+        for(; mid > 0; mid--, c = &(*c)->prox);
+        *a = malloc(sizeof(struct nodo));
+        (*a)->valor = (*c)->valor;
+        (*a)->esq = (*a)->dir = NULL;
+        LInt next = (*c)->prox;
+        *c = NULL;
+        listToBTree(l, &(*a)->esq);
+        listToBTree(next, &((*a)->dir));
+    }
+}
+
+// Questão 51.
+int maior(ABin a, int x){
+    return(!a || (a && a->valor && maior(a->esq, x) && maior(a->dir, x)));
+}
+
+int menor(ABin a, int x){
+    return(!a || (a && a->valor && menor(a->dir, x) && menor(a->esq, x)));
+}
+
+int deProcura(ABin a){
+    if(a){
+        int ans = menor(a->esq, a->valor) && maior(a->dir, a->valor);
+        return ans && deProcura(a->esq) && deProcura(a->dir);
+    }
+    return 1;
+}
